@@ -1,0 +1,96 @@
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+
+eureka:
+#  instance:
+#    hostname: localhost
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:rabbitmq}
+    password: ${RABBITMQ_PASSWORD:rabbitmq}
+  cloud:
+    config:
+      override-system-properties: true
+  jpa:
+    database-platform: ${JPA_DATABASE_PLATFORM:org.hibernate.dialect.PostgreSQLDialect}
+    hibernate:
+      ddl-auto: ${HIBERNATE_DDL_AUTO:update}
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        format_sql: ${HIBERNATE_FORMAT_SQL:true}
+        show_sql: ${HIBERNATE_SHOW_SQL:false}
+        use_sql_comments: ${HIBERNATE_USE_SQL_COMMENTS:false}
+        transaction:
+          jta:
+            platform: org.hibernate.service.jta.platform.internal.NoJtaPlatform
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+# Use Eureka Server
+service:
+  gateway:
+    http: ${GATEWAY_SERVICE_ENDPOINT_HTTP:http://localhost:8080}
+  auth:
+    lb: ${AUTH_SERVICE_ENDPOINT:lb://AUTH-SERVICE}
+    http: ${AUTH_SERVICE_ENDPOINT_HTTP:http://localhost:8888}
+    docs: /aggregate/AUTH-SERVICE/v3/api-docs
+    verify_user_mapping: /api/auth/user/me
+  chat:
+    lb: ${CHAT_SERVICE_ENDPOINT:lb://CHAT-SERVICE}
+    docs: /aggregate/CHAT-SERVICE/v3/api-docs
+  content:
+    lb: ${CONTENT_SERVICE_ENDPOINT:lb://CONTENT-SERVICE}
+    docs: /aggregate/CONTENT-SERVICE/v3/api-docs
+  setting:
+    lb: ${SETTING_SERVICE_ENDPOINT:lb://SETTING-SERVICE}
+    docs: /aggregate/SETTING-SERVICE/v3/api-docs
+
+cors:
+  allowedOrigins: http://localhost:3000, http://localhost:4200, http://localhost:8080, http://gateway-service:8080
+
+loki:
+  url: ${LOKI_URL:http://localhost:3100/loki/api/v1/push}
+
+management:
+  zipkin:
+    tracing:
+      endpoint: ${TEMPO_ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  observations:
+    key-values:
+      application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+logging:
+  pattern:
+    correlation: "[${spring.application.name:},%X{traceId:-},%X{spanId:-}] "
+  include-application-name: false
