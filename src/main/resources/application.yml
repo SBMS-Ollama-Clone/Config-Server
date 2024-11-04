@@ -11,6 +11,25 @@ spring:
       server:
         native:
           search-locations: "classpath:/configurations"
+    consul:
+      host: ${CONSUL_HOST:localhost}
+      port: ${CONSUL_PORT:8500}
+      discovery:
+        instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+        service-name: ${spring.application.name}
+        health-check-path: /actuator/health
+        health-check-interval: 15s
+        health-check-timeout: 5s
+        health-check-critical-timeout: 5s
+        prefer-ip-address: true
+        tags: ${spring.application.name}
+        hostname: ${spring.cloud.client.hostname}
+        port: ${server.port}
+        scheme: http
+        enabled: true
+        register: true
+        deregister: true
+        register-health-check: true
 
   rabbitmq:
     host: ${RABBITMQ_HOST:localhost}
