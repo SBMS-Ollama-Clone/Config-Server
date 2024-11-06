@@ -77,6 +77,8 @@ cors:
 
 loki:
   url: ${LOKI_URL:http://localhost:3100/loki/api/v1/push}
+logstash:
+  url: ${LOGSTASH_URL:localhost:5044}
 
 management:
   zipkin:
