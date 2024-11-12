@@ -29,15 +29,3 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn clean install package -DskipTests
-    - name: Cache Maven packages
-      uses: actions/cache@v2
-      with:
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        path: ~/.m2/repository
-        restore-keys: ${{ runner.os }}-maven
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: "https://sonarcloud.io"
-
